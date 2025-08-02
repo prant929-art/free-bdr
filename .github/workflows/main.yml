@@ -1,0 +1,46 @@
+name: TOOLBOXLAP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Start Building...
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Run Downloads.bat (Install essentials)
+        run: |
+          if exist Downloads.bat (
+            echo "Downloads.bat found"
+            cmd /c Downloads.bat
+          ) else (
+            echo "Downloads.bat not found!" && exit 1
+          )
+        shell: cmd
+
+      - name: Check if show.bat exists
+        run: |
+          if exist show.bat (
+            echo "show.bat found"
+          ) else (
+            echo "show.bat not found!" && exit 1
+          )
+        shell: cmd
+
+      - name: Run show.bat (Show website)
+        run: show.bat
+        shell: cmd
+
+      - name: Run loop.bat (Time counter)
+        run: loop.bat
+        shell: cmd
+        - name: Download and run external Downloads.bat
+  run: |
+    Invoke-WebRequest -Uri "https://gitlab.com/raposabrty/pcrdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat" -UseBasicParsing
+    cmd /c Downloads.bat
+  shell: pwsh
